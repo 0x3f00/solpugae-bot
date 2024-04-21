@@ -17,7 +17,6 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 bot.start((ctx) => ctx.reply('Welcome! Available commands: /ban, /ai'))
 bot.help((ctx) => ctx.reply('Available commands: /ban, /ai'))
-//bot.on(message('sticker'), (ctx) => ctx.reply('👍'))
 
 // ai help command
 bot.command('ai', (ctx) => { 
@@ -32,6 +31,7 @@ bot.command('test', (ctx) => {
 	console.log(ctx.message);
 })
 
+var globalPoll = null;
 // poll for ban command
 bot.command('ban', (ctx) => {
 	if(!ctx.message.reply_to_message || !ctx.message.reply_to_message.text)
@@ -41,7 +41,7 @@ bot.command('ban', (ctx) => {
 	}
 	const userName = ctx.message.reply_to_message.from.first_name;
 
-	ctx.replyWithPoll( "Забанить " + userName + "?", 
+	const poll = ctx.replyWithPoll( "Забанить " + userName + "?", 
 	["Да, забанить", "Нет, простить"], {
 		is_anonymous: false,
 		type: 'regular',
@@ -52,7 +52,20 @@ bot.command('ban', (ctx) => {
 		open_period: 30//,
 //		close_date: (new Date().getTime() / 1000) + 60 * 60 * 24,
 	});
+
+	poll.then((res) => {
+//		globalPoll = res;
+		setTimeout(() => ctx.reply("Poll must be finished"), 35000);
+	})
 });
+
+bot.on('poll_answer', (ctx) => {
+	console.log(ctx.updateType);
+	console.log("---");
+	console.log(ctx.update);
+	console.log("---");
+})
+
 
 function handleAiRequest(ctx)
 {
