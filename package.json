@@ -1,0 +1,17 @@
+{
+  "name": "solpugae",
+  "version": "1.0.0",
+  "description": "Solpugea Telegram Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "mytest"
+  },
+  "keywords": [
+    "bot"
+  ],
+  "author": "Glassy",
+  "license": "MIT",
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  }
+}
