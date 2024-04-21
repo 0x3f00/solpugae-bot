@@ -15,10 +15,9 @@ process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
 
-bot.start((ctx) => ctx.reply('Welcome'))
-bot.help((ctx) => ctx.reply('Send me a sticker'))
-bot.on(message('sticker'), (ctx) => ctx.reply('👍'))
-bot.hears('@scolopendra19_bot', (ctx) => ctx.reply('Hey there'))
+bot.start((ctx) => ctx.reply('Welcome! Available commands: /ban, /ai'))
+bot.help((ctx) => ctx.reply('Available commands: /ban, /ai'))
+//bot.on(message('sticker'), (ctx) => ctx.reply('👍'))
 
 // ai help command
 bot.command('ai', (ctx) => { 
