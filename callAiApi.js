@@ -35,7 +35,7 @@ async function callAiApi(apiUrl, input) {
 
   const payload = {
     "prompt": "User: " + input + "\n\nFurry Programmer (in English): ",
-    "max_tokens": 2000,
+    "max_tokens": 500,
     "temperature": 1,
     "top_p": 0.9,
     "seed": 10

@@ -35,7 +35,7 @@ bot.command('test', (ctx) => {
 
 // poll for ban command
 bot.command('ban', (ctx) => {
-	if(!ctx.message.reply_to_message)
+	if(!ctx.message.reply_to_message || !ctx.message.reply_to_message.text)
 	{
 		console.log(ctx.message);
 		return ctx.reply("I can only ban messages that I replied to");
@@ -62,7 +62,7 @@ function handleAiRequest(ctx)
 
 	// skip 4 first chars
 	var text = ctx.message.text.substr(4);
-	if(ctx.message.reply_to_message)
+	if(ctx.message.reply_to_message && ctx.message.reply_to_message.text)
 		text = ctx.message.reply_to_message.text;
 	
 //	console.log("request text: " + text);
