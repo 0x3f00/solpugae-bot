@@ -4,6 +4,7 @@
 	"webHookPort": 8443,
 	"webHookPath": "/LKJlkjlksdfjlksdjfLKJLkjLKjlkjLKJkd",
 	"superusers": [696969696],
+	"banPollDuration": 30,
+	"banThreshold": 7,
 	"callAiApiUrl": "http://127.0.0.1:5000/v1/completions"
-
 }

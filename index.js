@@ -31,7 +31,14 @@ bot.command('test', (ctx) => {
 	console.log(ctx.message);
 })
 
-var globalPoll = null;
+// feature to poll for ban command
+// 1. create poll
+// 2. remember poll id, user id, ctx
+// 3. wait for poll answers, do counting
+// 4. as soon as threshold is reached, ban user, remove poll
+// 5. on timeout, remove poll
+
+var glRunningPolls = [];
 // poll for ban command
 bot.command('ban', (ctx) => {
 	if(!ctx.message.reply_to_message || !ctx.message.reply_to_message.text)
@@ -49,23 +56,101 @@ bot.command('ban', (ctx) => {
 		explanation: 'Explaination',
 		explanation_parse_mode: 'Markdown',
 		allows_multiple_answers: false,
-		open_period: 30//,
-//		close_date: (new Date().getTime() / 1000) + 60 * 60 * 24,
+		open_period: 20
 	});
 
 	poll.then((res) => {
-//		globalPoll = res;
-		setTimeout(() => ctx.reply("Poll must be finished"), 35000);
+		console.log(res);
+		const pollName = res.poll.id;
+		const obj = {
+			pollMessageId: res.message_id,
+			targetUserName: userName,
+			targetUserId: ctx.message.reply_to_message.from.id,
+			banMessageId: ctx.message.message_id,
+			ctx: ctx,
+			banCount: 0,
+			forgiveCount: 0,
+			shown: true
+		}
+		glRunningPolls[pollName] = obj;
+		setTimeout(() => {
+			doPollCleanup(pollName);			
+		}, 30 * 1000);
+		console.log(glRunningPolls);
 	})
 });
 
+
+function doPollCleanup(pollName)
+{
+	if(null == glRunningPolls[pollName])
+		return;
+
+	if(!glRunningPolls[pollName].shown)
+		return;
+
+	glRunningPolls[pollName].ctx.deleteMessage(glRunningPolls[pollName].pollMessageId);
+	glRunningPolls[pollName].ctx.deleteMessage(glRunningPolls[pollName].banMessageId);
+
+	glRunningPolls[pollName].shown = false;
+
+	delete glRunningPolls[pollName];
+//	console.log("Poll removed: " + pollName);
+//	console.log(glRunningPolls);
+}
+
 bot.on('poll_answer', (ctx) => {
-	console.log(ctx.updateType);
-	console.log("---");
 	console.log(ctx.update);
 	console.log("---");
+
+	const pollName = ctx.update.poll_answer.poll_id;
+	if(null == glRunningPolls[pollName])
+		return;
+
+	if(ctx.update.poll_answer.option_ids[0] == 0)
+		glRunningPolls[pollName].banCount = glRunningPolls[pollName].banCount + 1;
+	
+	if(ctx.update.poll_answer.option_ids[0] == 1)
+		glRunningPolls[pollName].forgiveCount = glRunningPolls[pollName].forgiveCount + 1;
+
+	if(glRunningPolls[pollName].banCount >= settings.banThreshold)
+	{
+		doForgive(pollName);
+		return;
+	}
+
+	if(glRunningPolls[pollName].forgiveCount >= settings.banThreshold)
+	{
+		doForgive(pollName);
+		return;
+	}
 })
 
+function doBan(pollName)
+{
+	if(null == glRunningPolls[pollName])
+		return;
+
+	if(!glRunningPolls[pollName].shown)
+		return;
+
+	glRunningPolls[pollName].ctx.replyWithHTML("<b>" + glRunningPolls[pollName].targetUserName + "</b> забанен!");
+	glRunningPolls[pollName].ctx.banChatMember(glRunningPolls[pollName].targetUserId);
+
+	doPollCleanup(pollName);
+}
+
+function doForgive(pollName)
+{
+	if(null == glRunningPolls[pollName])
+		return;
+
+	if(!glRunningPolls[pollName].shown)
+		return;
+
+	glRunningPolls[pollName].ctx.replyWithHTML("<b>" + glRunningPolls[pollName].targetUserName + "</b> прощен!");
+	doPollCleanup(pollName);
+}
 
 function handleAiRequest(ctx)
 {
@@ -94,8 +179,8 @@ function handleAiRequest(ctx)
 
 // features:
 // list of superusers
-// /var/tgbot as home
-// /var/tgbot/inbox -- dump this file to superusers, then delete
+// /var/solpugae as home
+// /var/solpugae/inbox -- dump this file to superusers, then delete
 
 function botStartup()
 {
@@ -121,32 +206,35 @@ waitInternet();
 
 ////////////////////////////////////////////////////
 // INBOX
-const inboxPath = './inbox';
-fs.watch(inboxPath, (eventType, filename) => {
-	//		console.log(`event type is: ${eventType}`);
-	if (!filename) 
-		return;
+const inboxPath = home + '/inbox';
+if(fs.existsSync(inboxPath))
+{
+	fs.watch(inboxPath, (eventType, filename) => {
+		//		console.log(`event type is: ${eventType}`);
+		if (!filename) 
+			return;
 
-	if('rename' != eventType)
-		return;
+		if('rename' != eventType)
+			return;
 
-	const fullPath = inboxPath + '/' + filename;
-	if (!fs.existsSync(fullPath))
-		return;
+		const fullPath = inboxPath + '/' + filename;
+		if (!fs.existsSync(fullPath))
+			return;
 
-	try { 				
-		for(let i = 0; i < settings.superusers.length; i++)
-		{
-			//console.log('inboxed: ', i, " ", filename, " ", settings.superusers[i]);
-			bot.telegram.sendMessage(settings.superusers[i], filename);
+		try { 				
+			for(let i = 0; i < settings.superusers.length; i++)
+			{
+				//console.log('inboxed: ', i, " ", filename, " ", settings.superusers[i]);
+				bot.telegram.sendMessage(settings.superusers[i], filename);
+			}
 		}
-	}
-	catch(e) {
-		console.log(e);
-	}
+		catch(e) {
+			console.log(e);
+		}
 
-	setTimeout( () => { tryRemove(fullPath)}, 500);
-});
+		setTimeout( () => { tryRemove(fullPath)}, 500);
+	});
+}
 
 function tryRemove(fullPath)
 {
