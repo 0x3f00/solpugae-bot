@@ -134,7 +134,7 @@ function doBan(pollName)
 	if(!glRunningPolls[pollName].shown)
 		return;
 
-	glRunningPolls[pollName].ctx.replyWithHTML("<b>" + glRunningPolls[pollName].targetUserName + "</b> забанен!");
+	glRunningPolls[pollName].ctx.replyWithHTML("<b>" + escapeHTML(glRunningPolls[pollName].targetUserName) + "</b> забанен!");
 	glRunningPolls[pollName].ctx.banChatMember(glRunningPolls[pollName].targetUserId);
 
 	doPollCleanup(pollName);
@@ -148,7 +148,7 @@ function doForgive(pollName)
 	if(!glRunningPolls[pollName].shown)
 		return;
 
-	glRunningPolls[pollName].ctx.replyWithHTML("<b>" + glRunningPolls[pollName].targetUserName + "</b> прощен!");
+	glRunningPolls[pollName].ctx.replyWithHTML("<b>" + escapeHTML(glRunningPolls[pollName].targetUserName) + "</b> прощен!");
 	doPollCleanup(pollName);
 }
 
@@ -246,3 +246,18 @@ function tryRemove(fullPath)
 		console.log(e);
 	}
 }
+
+
+// Utils
+const escapeHTML = str =>
+  str.replace(
+    /[&<>'"]/g,
+    tag =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+  );
