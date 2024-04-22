@@ -56,11 +56,11 @@ bot.command('ban', (ctx) => {
 		explanation: 'Explaination',
 		explanation_parse_mode: 'Markdown',
 		allows_multiple_answers: false,
-		open_period: 20
+		open_period: settings.banPollDuration /* in seconds */
 	});
 
 	poll.then((res) => {
-		console.log(res);
+//		console.log(res);
 		const pollName = res.poll.id;
 		const obj = {
 			pollMessageId: res.message_id,
@@ -75,8 +75,8 @@ bot.command('ban', (ctx) => {
 		glRunningPolls[pollName] = obj;
 		setTimeout(() => {
 			doPollCleanup(pollName);			
-		}, 30 * 1000);
-		console.log(glRunningPolls);
+		}, (settings.banPollDuration + 5) * 1000);
+//		console.log(glRunningPolls);
 	})
 });
 
