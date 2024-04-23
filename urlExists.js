@@ -23,9 +23,13 @@ async function urlExists(inputUrl) {
     port: 80,
   };
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const req = http.request(options, (res) => {
       resolve(res.statusCode < 400 || res.statusCode >= 500);
+    });
+
+    req.on('error', function(error) {
+      reject(error);
     });
 
     req.end();

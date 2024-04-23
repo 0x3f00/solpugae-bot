@@ -42,11 +42,11 @@ async function callAiApi(apiUrl, template, input) {
 
         if((res.statusCode >= 300)) {
           console.log("HTTP " + res.statusCode + " " + res.statusMessage);
-          resolve("Service is not available");
+          reject("HTTP " + res.statusCode + " " + res.statusMessage);
         }
 
         res.on('error', (error) => {
-            resolve("Service is not available");
+            reject();
             console.log(error);
         });
 
@@ -58,6 +58,10 @@ async function callAiApi(apiUrl, template, input) {
 //            console.log(JSON.parse(data));
             resolve(JSON.parse(data).choices[0].text);
         });
+    });
+
+    req.on('error', function(error) {
+      reject("No listener");
     });
 
     req.write(JSON.stringify(payload));
