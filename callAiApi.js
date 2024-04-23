@@ -10,32 +10,15 @@ function isUrl(str) {
   }
 }
 
-function validateInput(input) {
-  if(null == input)
-    return false;
 
-  if(null == input.length)
-    return false;
-
-  if(input.length == 0) 
-    return false;
-
-  if(input.length > 500) 
-    return false;
-
-  return true;
-}
-
-async function callAiApi(apiUrl, input) {
+async function callAiApi(apiUrl, template, input) {
   // replace all \n+ with \n
   input = input.replace(/\n+/g, '\n');
 
-  if(!validateInput(input)) 
-    return Promise.resolve("Invalid input");
-
+  template = template.replace(/%TEXT%/g, input);
   const payload = {
-    "prompt": "User: " + input + "\n\nFurry Programmer (in English): ",
-    "max_tokens": 500,
+    "prompt": template,
+    "max_tokens": 200,
     "temperature": 1,
     "top_p": 0.9,
     "seed": 10

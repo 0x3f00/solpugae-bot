@@ -6,5 +6,18 @@
 	"superusers": [696969696],
 	"banPollDuration": 45,
 	"banThreshold": 7,
+	"textBanQuestion": "Are you sure you want to ban %USERNAME%?",
+	"textBanOptionBan": "Yes, ban",
+	"textBanOptionForgive": "No, forgive",
+	"textBanReport": "<b>%USERNAME%</b> banned!",
+	"textForgiveReport": "<b>%USERNAME%</b> forgiven!",
+	"textStartMessage": "Welcome! Available commands: /ban, /ai, /erase, /help",
+	"textHelpMessage": "Available commands: /ban, /ai, /erase, /help",
+	"textRemoving": "Removing reply...",
+	"textErrorReplyIsNeeded": "I can only ban messages that I replied to",
+	"textErrorTextIsMissing": "The text is missing",
+	"textErrorTextIsTooLong": "The text is tool long",
+	"textErrorOccured": "Sorry, an error occurred",
+	"textAiPrompt": "User: %TEXT%\n\nFurry Programmer (in English): ",
 	"callAiApiUrl": "http://127.0.0.1:5000/v1/completions"
 }
