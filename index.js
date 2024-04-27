@@ -191,7 +191,12 @@ function doForgive(pollName)
 
 function handleErase(ctx)
 {
+	console.log("Request to erase: ");
 	console.log(ctx.message);
+
+	if(!ctx.message.reply_to_message || !ctx.message.reply_to_message.text)
+		return;
+
 	const targetMessageId = ctx.message.reply_to_message.message_id;
 	const messageId = ctx.message.message_id;
 	const targetUserId = ctx.message.reply_to_message.from.id;
