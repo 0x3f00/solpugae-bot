@@ -29,6 +29,9 @@ bot.command('test', (ctx) => console.log(ctx.message))
 
 // erase command -- reply to bot's message so it be removed
 bot.command('erase', (ctx) => handleErase(ctx))
+bot.command('Erase', (ctx) => handleErase(ctx))
+bot.command('del', (ctx) => handleErase(ctx))
+bot.command('Del', (ctx) => handleErase(ctx))
 
 // feature to poll for ban command
 // 1. create poll
@@ -38,7 +41,8 @@ bot.command('erase', (ctx) => handleErase(ctx))
 // 5. on timeout, remove poll
 
 // poll for ban command
-bot.command('ban', (ctx) => handleBan(ctx));
+bot.hears('ban', (ctx) => handleBan(ctx));
+bot.hears('Ban', (ctx) => handleBan(ctx));
 bot.on('poll_answer', (ctx) => handleAnswer(ctx))
 
 // Initialization

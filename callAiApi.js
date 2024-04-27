@@ -18,10 +18,10 @@ async function callAiApi(apiUrl, template, input) {
   template = template.replace(/%TEXT%/g, input);
   const payload = {
     "prompt": template,
-    "max_tokens": 200,
+    "max_tokens": 450,
     "temperature": 1,
     "top_p": 0.9,
-    "seed": 10
+    "seed": Math.floor(Math.random() * 1000000),
   };
 
   const urlCracked = new url.URL(apiUrl);
