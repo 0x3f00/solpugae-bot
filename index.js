@@ -2,7 +2,7 @@ const { Telegraf } = require('telegraf');
 const { message } = require('telegraf/filters');
 const fs = require('fs');
 const urlExists = require('./urlExists');
-const callAiApi = require('./callAiApi');
+const callAiApiGemini = require('./callAiApi');
 
 // get home env
 const home = process.env.SOLPUGAE_HOME || '/var/solpugae';
@@ -247,7 +247,8 @@ function handleAiRequest(ctx)
 	
 //	console.log("request text: " + text);
 
-	callAiApi(settings.callAiApiUrl, settings.textAiPrompt, text)
+//	callAiApi(settings.callAiApiUrl, settings.textAiPrompt, text)
+	callAiApiGemini(settings.geminiToken, text)
 	.then((res) => {
 		ctx.reply(res).then((msg) => {
 			console.log(msg);

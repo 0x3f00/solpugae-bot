@@ -19,5 +19,6 @@
 	"textErrorTextIsTooLong": "The text is tool long",
 	"textErrorOccured": "Sorry, an error occurred",
 	"textAiPrompt": "User: %TEXT%\n\nFurry Programmer (in English): ",
-	"callAiApiUrl": "http://127.0.0.1:5000/v1/completions"
+	"callAiApiUrl": "http://127.0.0.1:5000/v1/completions",
+	"geminiToken": "TOKEN_API_GEMINI"
 }

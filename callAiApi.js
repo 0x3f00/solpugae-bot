@@ -69,4 +69,96 @@ async function callAiApi(apiUrl, template, input) {
 });
 }
 
-module.exports = callAiApi;
+async function callAiApiGemini(token, input) {
+  const apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent"
+  // replace all \n+ with \n
+  input = input.replace(/\n+/g, '\n');
+
+  // {"contents":[{"role": "user","parts":[{"text": "Give me five subcategories of jazz?"}]}]}
+  const payload = {
+    "contents": [
+      {
+        "role": "user",
+        "parts": [
+          {
+            "text": input
+          }
+        ]
+      }
+    ]
+  }
+
+  console.log(JSON.stringify(payload));  
+
+  const urlCracked = new url.URL(apiUrl);
+  const options = {
+    method: 'POST',
+    hostname: urlCracked.hostname,
+    path: urlCracked.pathname,
+    port: urlCracked.port || 443,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': token,
+      'Content-Length': Buffer.byteLength(JSON.stringify(payload)),
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+//    resolve(JSON.stringify(payload));
+    const req = https.request(options, (res) => {
+        let data = '';
+
+        if((res.statusCode >= 300)) {
+          console.log("HTTP " + res.statusCode + " " + res.statusMessage);
+          reject("HTTP " + res.statusCode + " " + res.statusMessage);
+        }
+
+        res.on('error', (error) => {
+            reject();
+            console.log(error);
+        });
+
+        res.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        res.on('end', () => {
+          const reply = JSON.parse(data);
+          console.log(JSON.stringify(reply));
+          if(reply.error)
+          {
+            if(reply.error.message)
+              reject(reply.error.message);
+            else if (reply.error.status)
+              reject(reply.error.status);
+            else
+              reject("No error code");
+          }
+
+          if(reply.candidates 
+            && reply.candidates[0] 
+            && reply.candidates[0].content 
+            && reply.candidates[0].content.parts 
+            && reply.candidates[0].content.parts[0] 
+            && reply.candidates[0].content.parts[0].text)
+            {
+              resolve(reply.candidates[0].content.parts[0].text);
+            }
+            else
+            {
+              reject("No content");
+            }
+        });
+    });
+
+    req.on('error', function(error) {
+      reject("No listener");
+    });
+
+    req.write(JSON.stringify(payload));
+    req.end();
+});
+}
+
+//module.exports = callAiApi;
+module.exports = callAiApiGemini;
