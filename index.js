@@ -65,6 +65,39 @@ function waitInternet()
 	  	setTimeout(waitInternet, 5000);
 	});
 }
+
+
+if(settings.webHookPath
+	&& settings.webHookPath.length > 0
+	&& settings.webHookUrl
+	&& settings.webHookUrl.length > 0
+	&& settings.webHookKey
+	&& settings.webHookKey.length > 0
+	&& settings.webHookCert
+	&& settings.webHookCert.length > 0
+)
+{
+// TLS options
+const tlsOptions = {
+	key: fs.readFileSync(settings.webHookKey),
+	cert: fs.readFileSync(settings.webHookCert),
+	ca: [
+	  // This is necessary only if the client uses a self-signed certificate.
+	  fs.readFileSync(settings.webHookCert)
+	]
+  }
+  
+  // Set telegram webhook
+  // The second argument is necessary only if the client uses a self-signed
+  // certificate. Including it for a verified certificate may cause things to break.
+  bot.telegram.setWebhook(settings.webHookUrl, {
+	source: settings.webHookCert
+  })
+  
+  // Start https webhook
+  bot.startWebhook(settings.webHookPath, tlsOptions, 8443)
+}
+
 waitInternet();
 
 

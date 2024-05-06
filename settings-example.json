@@ -3,6 +3,8 @@
 	"webHookUrl": "https://solpugae.lair.com:8443/LKJlkjlksdfjlksdjfLKJLkjLKjlkjLKJkd",
 	"webHookPort": 8443,
 	"webHookPath": "/LKJlkjlksdfjlksdjfLKJLkjLKjlkjLKJkd",
+	"webHookKey": "keys/private-key.pem",
+	"webHookCert": "keys/public-cert.pem",
 	"superusers": [696969696],
 	"banPollDuration": 45,
 	"banThreshold": 7,
