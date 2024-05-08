@@ -269,9 +269,9 @@ function handleAiRequest(ctx)
 		return;
 	}
 
-	if(text.length > 500)
+	if(text.length > 1500)
 	{
-		ctx.reply(settings.textErrorTextTooLong).then((msg) => {
+		ctx.reply(settings.textErrorTextIsTooLong).then((msg) => {
 			console.log(msg);
 			glDetectedSelfId = msg.from.id;
 		});
