@@ -3,6 +3,8 @@ const { message } = require('telegraf/filters');
 const fs = require('fs');
 const urlExists = require('./urlExists');
 const callAiApiGemini = require('./callAiApi');
+const makeHtml = require('./markdownToHtml');
+
 
 // get home env
 const home = process.env.SOLPUGAE_HOME || '/var/solpugae';
@@ -25,7 +27,7 @@ bot.command('ai', (ctx) => handleAiRequest(ctx))
 bot.command('AI', (ctx) => handleAiRequest(ctx))
 
 // test command
-bot.command('test', (ctx) => console.log(ctx.message))
+//bot.command('test', (ctx) => console.log(ctx.message))
 
 // erase command -- reply to bot's message so it be removed
 bot.command('erase', (ctx) => handleErase(ctx))
@@ -41,8 +43,8 @@ bot.command('Del', (ctx) => handleErase(ctx))
 // 5. on timeout, remove poll
 
 // poll for ban command
-bot.hears('ban', (ctx) => handleBan(ctx));
-bot.hears('Ban', (ctx) => handleBan(ctx));
+bot.command('ban', (ctx) => handleBan(ctx));
+bot.command('Ban', (ctx) => handleBan(ctx));
 bot.on('poll_answer', (ctx) => handleAnswer(ctx))
 
 // Initialization
@@ -131,6 +133,13 @@ function handleAnswer(ctx)
 
 function handleBan(ctx)
 {
+	var text = ctx.message.text.substr(5);
+	if(text.length == 0)
+	{
+		// manifesto is mandatory!
+		return;
+	}
+
 	if(!ctx.message.reply_to_message || !ctx.message.reply_to_message.text)
 	{
 		console.log(ctx.message);
@@ -281,9 +290,11 @@ function handleAiRequest(ctx)
 //	console.log("request text: " + text);
 
 //	callAiApi(settings.callAiApiUrl, settings.textAiPrompt, text)
-	callAiApiGemini(settings.geminiToken, text)
+	callAiApiGemini(settings.geminiToken, text)	
 	.then((res) => {
-		ctx.reply(res).then((msg) => {
+
+		const html = makeHtml(res);
+		ctx.replyWithHTML(html).then((msg) => {
 			console.log(msg);
 			glDetectedSelfId = msg.from.id;
 		})
