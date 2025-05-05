@@ -77,6 +77,7 @@ async function callAiApiGemini(token, input) {
 
   // {"contents":[{"role": "user","parts":[{"text": "Give me five subcategories of jazz?"}]}]}
   const payload = {
+    "model": "gemini-2.0-flash",
     "contents": [
       {
         "role": "user",
@@ -86,7 +87,11 @@ async function callAiApiGemini(token, input) {
           }
         ]
       }
-    ]
+    ],
+    "generationConfig": {
+      "temperature": 1.0,
+      "maxOutputTokens": 450
+    }
   }
 
   console.log(JSON.stringify(payload));  
