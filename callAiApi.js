@@ -71,7 +71,7 @@ async function callAiApi(apiUrl, template, input) {
 }
 
 async function callAiApiGemini(token, input) {
-  const apiUrl = const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+  const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
   // replace all \n+ with \n
   input = input.replace(/\n+/g, '\n');
 
